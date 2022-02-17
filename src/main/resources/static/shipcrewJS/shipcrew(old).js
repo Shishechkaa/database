@@ -9,56 +9,38 @@ function getIndex(list, id) {
 
 var ShipCrewApi = Vue.resource('/shipcrew{/id}');
 
-Vue.component('memberUpdate-form')
-
 Vue.component('member-form', {
     props: ['members', 'memberAttr'],
     data: function() {
         return {
-            first_name: '',
-            second_name: '',
-            third_name: '',
-            first_name_foreign: '',
+            text: '',
             id: ''
         }
     },
 
     watch: {
         memberAttr: function(newVal) {
-            this.first_name = newVal.first_name;
-            this.second_name = newVal.second_name;
-            this.third_name = newVal.third_name;
-            this.first_name_foreign = newVal.first_name_foreign;
+            this.text = newVal.text;
             this.id = newVal.id;
         }
     },
 
     template:
         '<div>' +
-        '<input type="name" placeholder="Write Name" v-model="first_name"/>' +
-        '<input type="name" placeholder="Write second name" v-model="second_name"/>' +
-        '<input type="name" placeholder="Write third name" v-model="third_name"/>' +
-        '<input type="name" placeholder="Write foreign first name" v-model="first_name_foreign"/>' +
-        '<input type="button" value="Save" @click="save"/>' +
+            '<input type="name" placeholder="Write name" v-model="text"/>' +
+            '<input type="button" value="Save" @click="save"/>' +
         '</div>',
 
     methods: {
         save: function() {
-            var member = {first_name: this.first_name,
-                second_name: this.second_name,
-                third_name: this.third_name,
-                first_name_foreign: this.first_name_foreign
-            };
+            var member = {text: this.text};
 
             if(this.id) {
                 ShipCrewApi.update({id: this.id}, member).then(result =>
                     result.json().then(data => {
                         var index = getIndex(this.members, data.id);
                         this.members.splice(index, 1, data);
-                        this.first_name = ''
-                        this.second_name = ''
-                        this.third_name = ''
-                        this.first_name_foreign = ''
+                        this.text = ''
                         this.id = ''
                     })
                 )
@@ -78,8 +60,7 @@ Vue.component('member-row', {
     props: ['member', 'updateMember', 'members'],
     template:
         '<div>' +
-            '<i>({{ member.id }})</i>' +
-            '{{ member.second_name }} {{ member.first_name }} {{ member. third_name}}' +
+            '<i>({{ member.id }})</i> {{ member.text }}' +
             '<span style="position: absolute; right: 0">' +
                 '<input type="button" value="Update" @click="update"/>' +
                 '<input type="button" value="X" @click="del"/>' +
@@ -113,9 +94,9 @@ Vue.component('members-list', {
 
     template:
         '<div>' +
-        '<member-form :members="members" :memberAttr="member"/>' +
-        '<member-row v-for="member in members" :key="member.id" :member="member"' +
-        ':updateMember="updateMember" :members="members"/>' +
+            '<member-form :members="members" :memberAttr="member"/>' +
+            '<member-row v-for="member in members" :key="member.id" :member="member"' +
+            ':updateMember="updateMember" :members="members"/>' +
         '</div>',
 
     created: function () {
