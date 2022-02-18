@@ -7,6 +7,11 @@ import javax.persistence.*;
 @Entity
 @Table
 @Data
-public class ShipCrew extends Human {
+public class ShipCrew {
+    @Id
+    private Long id;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    private Human human;
 }

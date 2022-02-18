@@ -6,7 +6,6 @@ import javax.persistence.*;
 import java.sql.Date;
 
 @Entity
-@Table
 @Data
 public class Human {
     @Id
