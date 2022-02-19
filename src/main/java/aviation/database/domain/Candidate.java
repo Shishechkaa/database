@@ -1,6 +1,7 @@
 package aviation.database.domain;
 
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 

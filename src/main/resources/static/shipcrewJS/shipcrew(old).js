@@ -40,7 +40,10 @@ Vue.component('member-form', {
                     result.json().then(data => {
                         var index = getIndex(this.members, data.id);
                         this.members.splice(index, 1, data);
-                        this.text = ''
+                        this.first_name = ''
+                        this.second_name = ''
+                        this.third_name = ''
+                        this.first_name_foreign = ''
                         this.id = ''
                     })
                 )

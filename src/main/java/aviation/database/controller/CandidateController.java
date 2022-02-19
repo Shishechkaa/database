@@ -2,6 +2,7 @@ package aviation.database.controller;
 
 import aviation.database.domain.Candidate;
 import aviation.database.domain.Human;
+import aviation.database.domain.SupCandidate;
 import aviation.database.repo.CandidateRepo;
 import aviation.database.repo.HumanRepo;
 import org.springframework.beans.BeanUtils;
@@ -36,22 +37,34 @@ public class CandidateController {
     }
 
     @PostMapping
-    public Human create(@RequestBody Candidate member) {
-        candidateRepo.save(member);
-        return humanRepo.save(member.getHuman());
+    public Human create(@RequestBody SupCandidate member) {
+        Human human = new Human();
+        BeanUtils.copyProperties(member, human);
+        human = humanRepo.save(human);
+        Candidate candidate = new Candidate();
+        BeanUtils.copyProperties(member, candidate);
+        candidate.setHuman(human);
+        candidateRepo.save(candidate);
+        return human;
     }
 
     @PutMapping("{id}")
-    public Candidate update (
-            @PathVariable("id") Candidate memberFromDB,
-            @RequestBody Candidate member
+    public Human update (
+            @PathVariable("id") Human memberFromDB,
+            @RequestBody SupCandidate member
     ) {
         BeanUtils.copyProperties(member, memberFromDB, "id");
-        return candidateRepo.save(memberFromDB);
+        Candidate candidate = new Candidate();
+        BeanUtils.copyProperties(member, candidate, "id");
+        BeanUtils.copyProperties(memberFromDB, candidate);
+        candidate.setHuman(memberFromDB);
+        candidateRepo.save(candidate);
+        return humanRepo.save(memberFromDB);
     }
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable("id") Candidate member) {
         candidateRepo.delete(member);
+        humanRepo.delete(member.getHuman());
     }
 }
