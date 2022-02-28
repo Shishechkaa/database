@@ -11,11 +11,15 @@ import java.util.Set;
 @Table(name = "usr")
 public class User implements UserDetails {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String username;
     private String password;
-    private String passwordConfirm;
-    @ManyToMany(fetch = FetchType.EAGER)
+    private boolean active;
+
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
     public Long getId() {
@@ -48,7 +52,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isActive();
     }
 
     public void setUsername(String username) {
@@ -69,12 +73,12 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public String getPasswordConfirm() {
-        return passwordConfirm;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public Set<Role> getRoles() {
