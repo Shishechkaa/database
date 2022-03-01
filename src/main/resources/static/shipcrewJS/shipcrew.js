@@ -80,7 +80,7 @@ Vue.component('member-row', {
         '<div>' +
             '<i>({{ member.id }})</i>' +
             '{{ member.second_name }} {{ member.first_name }} {{ member. third_name}}' +
-            '<span style="position: absolute; right: 0">' +
+            '<span style="position: absolute; right: 30px">' +
                 '<input type="button" value="Update" @click="update"/>' +
                 '<input type="button" value="X" @click="del"/>' +
             '</span>' +
@@ -114,8 +114,10 @@ Vue.component('members-list', {
     template:
         '<div>' +
         '<member-form :members="members" :memberAttr="member"/>' +
+        '<div class="scroll">' +
         '<member-row v-for="member in members" :key="member.id" :member="member"' +
         ':updateMember="updateMember" :members="members"/>' +
+        '</div>' +
         '</div>',
 
     created: function () {

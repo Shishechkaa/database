@@ -27,4 +27,9 @@ public class UserController {
         BeanUtils.copyProperties(user, userFromDB, "id", "password");
         return userRepo.save(userFromDB);
     }
+
+    @PostMapping
+    public User create(@RequestBody User user) {
+        return userRepo.save(user);
+    }
 }
