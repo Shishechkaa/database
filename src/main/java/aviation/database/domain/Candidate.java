@@ -1,13 +1,9 @@
 package aviation.database.domain;
 
-import lombok.Data;
-import org.springframework.beans.BeanUtils;
-
 import javax.persistence.*;
 
 @Entity
 @Table
-@Data
 public class Candidate {
     @Id
     private Long id;
@@ -18,4 +14,39 @@ public class Candidate {
 
     private String debts;
     private Boolean approved;
+
+    public Candidate() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Human getHuman() {
+        return human;
+    }
+
+    public void setHuman(Human human) {
+        this.human = human;
+    }
+
+    public String getDebts() {
+        return debts;
+    }
+
+    public void setDebts(String debts) {
+        this.debts = debts;
+    }
+
+    public Boolean getApproved() {
+        return approved;
+    }
+
+    public void setApproved(Boolean approved) {
+        this.approved = approved;
+    }
 }

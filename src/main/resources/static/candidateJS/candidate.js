@@ -8,6 +8,7 @@ function getIndex(list, id) {
 }
 
 var CandidateApi = Vue.resource('/candidate{/id}');
+var ShipCrewApi = Vue.resource('/shipcrew{/id}');
 
 Vue.component('memberUpdate-form')
 
@@ -19,7 +20,8 @@ Vue.component('member-form', {
             second_name: '',
             third_name: '',
             first_name_foreign: '',
-            id: ''
+            id: '',
+            approved: false
         }
     },
 
@@ -30,6 +32,7 @@ Vue.component('member-form', {
             this.third_name = newVal.third_name;
             this.first_name_foreign = newVal.first_name_foreign;
             this.id = newVal.id;
+            this.approved = newVal.approved;
         }
     },
 
@@ -47,7 +50,8 @@ Vue.component('member-form', {
             var member = {first_name: this.first_name,
                 second_name: this.second_name,
                 third_name: this.third_name,
-                first_name_foreign: this.first_name_foreign
+                first_name_foreign: this.first_name_foreign,
+                approved: false
             };
 
             if(this.id) {
@@ -76,14 +80,21 @@ Vue.component('member-form', {
 
 Vue.component('member-row', {
     props: ['member', 'updateMember', 'members'],
+    data: function () {
+        return {
+            approved: this.member.approved
+        }
+    },
     template:
         '<div>' +
-        '<i>({{ member.id }})</i>' +
-        '{{ member.second_name }} {{ member.first_name }} {{ member. third_name}}' +
-        '<span style="position: absolute; right: 0">' +
-        '<input type="button" value="Update" @click="update"/>' +
-        '<input type="button" value="X" @click="del"/>' +
-        '</span>' +
+            '<input v-if="approved" type="button" value="Добавить в команду" @click="pushInCrew"/>' +
+            '<i>({{ member.id }})</i>' +
+            '{{ member.second_name }} {{ member.first_name }} {{ member. third_name}}' +
+            '<span style="position: absolute; right: 0">' +
+                '<input type="button" value="Одобрить" @click="approve"/>' +
+                '<input type="button" value="Update" @click="update"/>' +
+                '<input type="button" value="X" @click="del"/>' +
+            '</span>' +
         '</div>',
 
     methods: {
@@ -97,6 +108,37 @@ Vue.component('member-row', {
                     this.members.splice(this.members.indexOf(this.member), 1)
                 }
             })
+        },
+
+        approve: function () {
+            if (this.approved === null) {
+                this.approved = true;
+            } else {
+                this.approved = !this.approved;
+            }
+        },
+
+        pushInCrew: function () {
+            var member = {
+                id: '',
+                first_name: this.member.first_name,
+                second_name: this.member.second_name,
+                third_name: this.member.third_name,
+                first_name_foreign: this.member.first_name_foreign,
+                second_name_foreign: this.member.second_name_foreign,
+                position: this.member.position,
+                division: this.member.division,
+                citizenship: this.member.citizenship,
+                birth_date: this.member.birth_date,
+                last_work: this.member.last_work
+            }
+            if(this.approved) {
+                ShipCrewApi.save({}, member);
+                CandidateApi.remove({id: this.member.id}).then(result => {
+                    if(result.ok)
+                        this.members.splice(this.members.indexOf(this.member), 1)
+                });
+            }
         }
     }
 })

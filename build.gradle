@@ -29,8 +29,8 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-impl
 	implementation 'com.sun.xml.bind:jaxb-impl:3.0.2'
 	// https://mvnrepository.com/artifact/org.postgresql/postgresql
-	implementation 'org.postgresql:postgresql:42.3.2'
-	implementation('javax.xml.bind:jaxb-api')
+	implementation 'org.postgresql:postgresql:42.3.3'
+	implementation 'javax.xml.bind:jaxb-api'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
