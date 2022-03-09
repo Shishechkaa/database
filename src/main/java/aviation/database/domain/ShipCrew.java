@@ -11,7 +11,7 @@ public class ShipCrew {
     @Id
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @MapsId
     private Human human;

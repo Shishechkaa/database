@@ -27,11 +27,10 @@ public class OrderController {
             @RequestBody OrderDoc order
     ) {
         order.setShipCrew(shipCrew);
-        OrderDoc test = orderRepo.save(order);
-        return test;
+        return orderRepo.save(order);
     }
 
-    @DeleteMapping
+    @DeleteMapping("delete")
     public void delete(@RequestBody OrderDoc order) {
         orderRepo.delete(order);
     }

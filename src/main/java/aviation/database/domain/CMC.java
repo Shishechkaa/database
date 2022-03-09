@@ -21,7 +21,7 @@ public class CMC {
     private Date cmc_return_date;
     private Boolean is_active;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "ship_crew_id")
     @JsonIgnore

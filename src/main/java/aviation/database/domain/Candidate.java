@@ -1,5 +1,8 @@
 package aviation.database.domain;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 
 @Entity
@@ -8,7 +11,8 @@ public class Candidate {
     @Id
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @MapsId
     private Human human;
 
@@ -16,6 +20,11 @@ public class Candidate {
     private Boolean approved;
 
     public Candidate() {
+    }
+
+    public Candidate(Human human) {
+        this.human = human;
+        this.id = human.getId();
     }
 
     public Long getId() {

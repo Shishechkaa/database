@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,16 +19,11 @@ import java.util.stream.Collectors;
 public class ShipCrewController {
     private final ShipCrewRepo shipCrewRepo;
     private final HumanRepo humanRepo;
-    private final CMCRepo cmcRepo;
-    private final OrderDocRepo orderDocRepo;
 
     @Autowired
-    public ShipCrewController(ShipCrewRepo shipCrewRepo, HumanRepo humanRepo,
-                              CMCRepo cmcRepo, OrderDocRepo orderDocRepo) {
+    public ShipCrewController(ShipCrewRepo shipCrewRepo, HumanRepo humanRepo) {
         this.shipCrewRepo = shipCrewRepo;
         this.humanRepo = humanRepo;
-        this.cmcRepo = cmcRepo;
-        this.orderDocRepo = orderDocRepo;
     }
 
     @GetMapping
@@ -42,32 +38,6 @@ public class ShipCrewController {
         return member;
     }
 
-    @PutMapping(value = "search")
-    public List<Human> search(@RequestBody Human member) {
-        List<Human> test = humanRepo.findAll().stream().filter(human -> {
-            if(human.getFirst_name().equals(member.getFirst_name()))
-                return true;
-            if(human.getSecond_name().equals(member.getSecond_name()))
-                return true;
-            if(human.getThird_name().equals(member.getThird_name()))
-                return true;
-            if(human.getFirst_name_foreign().equals(member.getFirst_name_foreign()))
-                return true;
-            if(human.getSecond_name_foreign().equals(member.getSecond_name_foreign()))
-                return true;
-            if(human.getPosition().equals(member.getPosition()))
-                return true;
-            if(human.getDivision().equals(member.getDivision()))
-                return true;
-            if(human.getCitizenship().equals(member.getCitizenship()))
-                return true;
-            if(human.getBirth_date().equals(member.getBirth_date()))
-                return true;
-            return human.getLast_work().equals(member.getLast_work());
-        }).collect(Collectors.toList());
-        return test;
-    }
-
     @PostMapping
     public Human create(@RequestBody Human member) {
         ShipCrew newMember = new ShipCrew();
@@ -75,6 +45,45 @@ public class ShipCrewController {
         shipCrewRepo.save(newMember);
         humanRepo.save(member);
         return member;
+    }
+
+    @PutMapping(value = "search")
+    public List<Human> search(@RequestBody Human member) {
+        List<Human> humanList = new ArrayList<>();
+        shipCrewRepo.findAll().stream().filter(shipCrew -> {
+            if(shipCrew.getHuman().getFirst_name().equals(member.getFirst_name())
+                    && (member.getFirst_name() != null && !member.getFirst_name().equals("")))
+                return true;
+            if(shipCrew.getHuman().getSecond_name().equals(member.getSecond_name())
+                    && (member.getSecond_name() != null && !member.getSecond_name().equals("")))
+                return true;
+            if(shipCrew.getHuman().getThird_name().equals(member.getThird_name())
+                    && (member.getThird_name() != null && !member.getThird_name().equals("")))
+                return true;
+            if(shipCrew.getHuman().getFirst_name_foreign().equals(member.getFirst_name_foreign())
+                    && (member.getFirst_name_foreign() != null && !member.getFirst_name_foreign().equals("")))
+                return true;
+            if(shipCrew.getHuman().getSecond_name_foreign().equals(member.getSecond_name_foreign())
+                    && (member.getSecond_name_foreign() != null && !member.getSecond_name_foreign().equals("")))
+                return true;
+            if(shipCrew.getHuman().getPosition().equals(member.getPosition())
+                    && (member.getPosition() != null && !member.getPosition().equals("")))
+                return true;
+            if(shipCrew.getHuman().getDivision().equals(member.getDivision())
+                    && (member.getDivision() != null && !member.getDivision().equals("")))
+                return true;
+            if(shipCrew.getHuman().getCitizenship().equals(member.getCitizenship())
+                    && (member.getCitizenship() != null && !member.getCitizenship().equals("")))
+                return true;
+            if(shipCrew.getHuman().getBirth_date() == member.getBirth_date()
+                    && member.getBirth_date() != null)
+                return true;
+            return shipCrew.getHuman().getLast_work().equals(member.getLast_work())
+                    && (member.getLast_work() != null && !member.getLast_work().equals(""));
+        }).forEachOrdered(shipCrew -> {
+            humanList.add(humanRepo.getById(shipCrew.getId()));
+        });
+        return humanList;
     }
 
     @PutMapping("{id}")
@@ -86,9 +95,8 @@ public class ShipCrewController {
         return humanRepo.save(memberFromDB);
     }
 
-    @DeleteMapping("{id}")
-    public void delete(@PathVariable("id") ShipCrew member) {
-        shipCrewRepo.delete(member);
-        humanRepo.delete(member.getHuman());
+    @DeleteMapping("delete/{id}")
+    public void delete(@PathVariable("id") Human member) {
+        humanRepo.delete(member);
     }
 }

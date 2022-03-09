@@ -15,7 +15,7 @@ public class OrderDoc {
     private Date order_date;
     private String order_type;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "ship_crew_id")
     @JsonIgnore

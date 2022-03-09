@@ -33,17 +33,24 @@ public class CMCController {
         return cmcRepo.save(cmc);
     }
 
-    /*@PutMapping("{cmc_number}")
+    @PutMapping("deActive{shipCrew_id}")
     public CMC update(
-            @PathVariable("cmc_number") CMC cmcFromDB,
+            @PathVariable("shipCrew_id") ShipCrew shipCrew,
             @RequestBody CMC cmc
-    ) {
-        BeanUtils.copyProperties(cmc, cmcFromDB, "cmc_number");
-        return cmcRepo.save(cmcFromDB);
-    }*/
+    )
+    {
+        cmc.setShipCrew(shipCrew);
+        cmc.setIs_active(false);
+        return cmcRepo.save(cmc);
+    }
 
-    @DeleteMapping("{shipCrew_id}")
-    public void delete(@RequestBody CMC cmc) {
+    @DeleteMapping("delete/{shipCrew_id}")
+    public void delete(
+            @PathVariable("shipCrew_id") ShipCrew shipCrew,
+            @RequestBody CMC cmc
+    )
+    {
+        cmc.setShipCrew(shipCrew);
         cmcRepo.delete(cmc);
     }
 }

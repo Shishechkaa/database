@@ -54,6 +54,8 @@ Vue.component('user-row', {
             '<input type="text" value="username" v-model="user.username" @keyup.enter="update_user"/>' +
                 '<input type="checkbox" id="user" value="USER" v-model="user.roles" @change="update_user"/>' +
                 '<label for="user">User</label>' +
+                '<input type="checkbox" id="manager" value="MANAGER" v-model="user.roles" @change="update_user"/>' +
+                '<label for="manager">Manager</label>' +
                 '<input type="checkbox" id="admin" value="ADMIN" v-model="user.roles" @change="update_user"/>' +
                 '<label for="admin">Admin</label>' +
             '<div><span>Отмеченные роли: {{user.roles}}</span></div>' +
