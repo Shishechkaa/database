@@ -2,18 +2,13 @@ package aviation.database.controller;
 
 import aviation.database.domain.Candidate;
 import aviation.database.domain.Human;
-import aviation.database.domain.SupCandidate;
 import aviation.database.repo.CandidateRepo;
 import aviation.database.repo.HumanRepo;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("candidate")
@@ -27,34 +22,21 @@ public class CandidateController {
     }
 
     @GetMapping
-    public List<SupCandidate> list() {
-        List<SupCandidate> SupCandidateList = new ArrayList<>();
-        candidateRepo.findAll().stream().forEach(candidate -> {
-          Human human = humanRepo.getById(candidate.getId());
-          SupCandidate supCandidate = new SupCandidate();
-          BeanUtils.copyProperties(candidate, supCandidate);
-          BeanUtils.copyProperties(human, supCandidate);
-          SupCandidateList.add(supCandidate);
-        });
-        return SupCandidateList;
+    public List<Candidate> list() {
+        return candidateRepo.findAll();
     }
 
     @PostMapping
-    public SupCandidate create(@RequestBody SupCandidate member) {
+    public Candidate create(@RequestBody Candidate candidate) {
         Human human = new Human();
-        BeanUtils.copyProperties(member, human);
-        human = humanRepo.save(human);
-        Candidate candidate = new Candidate(human);
-        BeanUtils.copyProperties(member, candidate, "id");
-        candidate = candidateRepo.save(candidate);
-        BeanUtils.copyProperties(candidate, member);
-        BeanUtils.copyProperties(human, member);
-        return member;
+        BeanUtils.copyProperties(candidate, human);
+        humanRepo.save(human);
+        return candidateRepo.save(candidate);
     }
 
-    @PutMapping(value = "search")
-    public List<SupCandidate> search(@RequestBody SupCandidate member) {
-        List<SupCandidate> SupCandidateList = new ArrayList<>();
+    /*@PutMapping(value = "search")
+    public List<Candidate> search(@RequestBody Candidate member) {
+        List<Candidate> CandidateList = new ArrayList<>();
         candidateRepo.findAll().stream().filter(candidate -> {
             if(candidate.getHuman().getFirst_name().equals(member.getFirst_name())
                     && (member.getFirst_name() != null && !member.getFirst_name().equals("")))
@@ -90,29 +72,22 @@ public class CandidateController {
                     && (member.getDebts() != null && !member.getDebts().equals(""));
         }).forEachOrdered(candidate -> {
             Human human = humanRepo.getById(candidate.getId());
-            SupCandidate supCandidate = new SupCandidate();
-            BeanUtils.copyProperties(candidate, supCandidate);
-            BeanUtils.copyProperties(human, supCandidate);
-            SupCandidateList.add(supCandidate);
+            Candidate Candidate = new Candidate();
+            BeanUtils.copyProperties(candidate, Candidate);
+            BeanUtils.copyProperties(human, Candidate);
+            CandidateList.add(Candidate);
         });
-        return SupCandidateList;
-    }
+        return CandidateList;
+    }*/
 
     @PutMapping("{id}")
-    public SupCandidate update (
-            @PathVariable("id") Human memberFromDB,
-            @RequestBody SupCandidate member
+    public Candidate update (
+            @PathVariable("id") Candidate candidateFromDB,
+            @RequestBody Candidate candidate
     ) {
-        BeanUtils.copyProperties(member, memberFromDB, "id");
-        Candidate candidate = new Candidate(memberFromDB);
-        BeanUtils.copyProperties(member, candidate, "id");
-        BeanUtils.copyProperties(memberFromDB, candidate);
-        candidate = candidateRepo.save(candidate);
-        memberFromDB = humanRepo.save(memberFromDB);
-        SupCandidate supCandidate = new SupCandidate();
-        BeanUtils.copyProperties(candidate, supCandidate);
-        BeanUtils.copyProperties(memberFromDB, supCandidate);
-        return supCandidate;
+        candidate.getHuman().setId(candidateFromDB.getId());
+        BeanUtils.copyProperties(candidate, candidateFromDB, "id");
+        return candidateRepo.save(candidateFromDB);
     }
 
     @DeleteMapping("delete/{id}")
